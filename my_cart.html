@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i-Max Computers - My Cart</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #263238;
+            padding-top: 70px;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #0288d1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d47a1;
+        }
+
+        /* SIDEBAR & OVERLAY */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 201;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px 20px 20px;
+            background: linear-gradient(180deg, #0288d1 0%, #01579b 100%);
+            color: #ffffff;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sidebar-header p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex: 1;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 24px;
+            color: #455a64;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item a:hover, .sidebar-item a.active {
+            background-color: #e1f5fe;
+            color: #0288d1;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+
+        /* CART ITEMS */
+        .cart-item {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        .item-img-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f0f4f8;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 4px;
+        }
+
+        .item-price {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0288d1;
+            margin-bottom: 8px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1.5px solid #cfd8dc;
+            background: #ffffff;
+            color: #455a64;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:active {
+            background-color: #e1f5fe;
+            border-color: #0288d1;
+            color: #0288d1;
+        }
+
+        .qty-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #263238;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .btn-remove {
+            background: #ffebee;
+            color: #e53935;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-remove:active {
+            opacity: 0.9;
+        }
+
+        /* EMPTY CART CONTAINER */
+        .empty-cart-view {
+            text-align: center;
+            padding: 50px 20px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            margin-top: 20px;
+        }
+
+        .empty-cart-view p {
+            font-size: 16px;
+            color: #78909c;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .btn-store {
+            display: inline-block;
+            padding: 14px 28px;
+            background: #0288d1;
+            color: #ffffff;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(2, 136, 209, 0.3);
+            transition: background 0.2s;
+        }
+
+        .btn-store:active {
+            background: #01579b;
+        }
+
+        /* PAYMENT SECTION */
+        .payment-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .qr-placeholder {
+            width: 216px;
+            height: 216px;
+            margin: 0 auto 15px auto;
+            background: #ffffff;
+            border: 4px solid #000000;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 6px;
+        }
+
+        .qr-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-subtext {
+            font-size: 12px;
+            font-weight: 700;
+            color: #455a64;
+            margin-bottom: 20px;
+        }
+
+        /* COUPON */
+        .coupon-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #cfd8dc;
+            border-radius: 14px;
+            font-size: 14px;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        .btn-apply {
+            padding: 0 20px;
+            background: #0288d1;
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .coupon-status {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .total-amount {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0d47a1;
+            margin-bottom: 15px;
+        }
+
+        /* WHATSAPP ORDER BUTTON (Compact Size) */
+        .btn-whatsapp-order {
+            width: 100%;
+            padding: 12px 16px;
+            background: #25d366;
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn-whatsapp-order:active {
+            background: #128c7e;
+        
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #78909c;
+            font-size: 11px;
+            font-weight: 600;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item.active { color: #0288d1; }
+        .nav-item svg { width: 22px; height: 22px; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <button class="header-btn" id="openSidebarBtn" aria-label="Open Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <h1 class="header-title">My Cart</h1>
+        <button class="header-btn" onclick="window.location.href='notifications.html'" aria-label="Notifications">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>i-Max Computers</h2>
+            <p>Sales & Service Solutions</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="index.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="service.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Services
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="store.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    Store
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="my_cart.html" class="active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    My Cart
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="notifications.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    Notifications
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="profile.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profile
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container">
+        <!-- CART ITEMS LIST / EMPTY VIEW -->
+        <div id="cartContentArea">
+            <p style="text-align: center; color: #90a4ae; padding: 20px;">Loading cart items...</p>
+        </div>
+
+        <!-- PAYMENT SECTION -->
+        <div class="payment-card" id="paymentSection" style="display: none;">
+            <div class="qr-placeholder" id="qrContainer">
+                <p style="font-size: 12px; color: #90a4ae;">Loading QR Code...</p>
+            </div>
+            <div class="qr-subtext">SCAN TO PAY FAST ⚡</div>
+
+            <!-- Coupon Section -->
+            <div class="coupon-group">
+                <input type="text" id="couponInput" class="form-control" placeholder="ENTER COUPON CODE">
+                <button class="btn-apply" id="btnApplyCoupon">Apply</button>
+            </div>
+            <div id="couponStatus" class="coupon-status"></div>
+
+            <div class="total-amount" id="totalAmountDisplay">Total Payable Amount: ₹0</div>
+
+            <!-- WHATSAPP ORDER BUTTON -->
+            <button class="btn-whatsapp-order" id="btnWhatsAppOrder">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01-1.87-1.87-4.36-2.9-7.01-2.9zm0 1.67c2.21 0 4.29.86 5.85 2.42 1.56 1.56 2.42 3.64 2.42 5.85 0 4.56-3.71 8.27-8.27 8.27-1.45 0-2.87-.39-4.11-1.13l-.29-.17-3.04.8.81-2.96-.19-.31c-.81-1.32-1.24-2.85-1.24-4.41 0-4.56 3.71-8.27 8.26-8.27zm4.51 6.09c-.12-.06-.71-.35-.82-.39-.11-.04-.19-.06-.27.06-.08.12-.31.39-.38.47-.07.08-.14.09-.26.03-.12-.06-.51-.19-.97-.6-.36-.32-.6-.72-.67-.84-.07-.12-.01-.18.05-.24.05-.05.12-.13.18-.2.06-.07.08-.12.12-.2.04-.08.02-.15-.01-.21-.03-.06-.27-1.31-.37-1.79-.1-.47-.2-.41-.27-.42l-.23-.01c-.08 0-.21.03-.32.15-.11.12-.42.41-.42 1s.43 1.12.49 1.2c.06.08.85 1.3 2.06 1.82.29.13.51.21.68.27.29.09.55.08.76.05.23-.04.71-.29.81-.57.1-.28.1-.52.07-.57-.03-.05-.11-.08-.23-.14z"/></svg>
+                Send Order & Payment Screenshot
+            </button>
+        </div>
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Home</span>
+        </a>
+        <a href="service.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            <span>Service</span>
+        </a>
+        <a href="store.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Store</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- FIREBASE & SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+        import { getDatabase, ref, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
+
+        // Check Login Session
+        const currentUser = localStorage.getItem('loggedUser');
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHSiV0Y5zpzSI2fBeho7WnofFHyR2a3eo",
+            authDomain: "i-max-computers.firebaseapp.com",
+            databaseURL: "https://i-max-computers-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "i-max-computers",
+            storageBucket: "i-max-computers.firebasestorage.app",
+            messagingSenderId: "654132099212",
+            appId: "1:654132099212:web:ed3222b2c80efed5bf23a9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let cartItems = [];
+        let appliedDiscountPercent = 0;
+        let appliedCouponCode = "";
+        let couponMemberName = "";
+        let activeUpiId = "";
+        let storeOwnerPhone = "919344165879"; // Updated store owner WhatsApp number
+
+        // UI Element References
+        const cartContentArea = document.getElementById('cartContentArea');
+        const paymentSection = document.getElementById('paymentSection');
+        const totalAmountDisplay = document.getElementById('totalAmountDisplay');
+        const qrContainer = document.getElementById('qrContainer');
+        const couponInput = document.getElementById('couponInput');
+        const couponStatus = document.getElementById('couponStatus');
+
+        // Function to recalculate total & update QR
+        function updateCartSummary() {
+            let subtotal = 0;
+            cartItems.forEach(item => {
+                subtotal += (parseFloat(item.price) || 0) * (item.quantity || 1);
+            });
+
+            let finalAmount = subtotal - (subtotal * (appliedDiscountPercent / 100));
+            totalAmountDisplay.innerText = `Total Payable Amount: ₹${finalAmount.toFixed(0)}`;
+
+            if (activeUpiId && subtotal > 0) {
+                const upiUrl = `upi://pay?pa=${encodeURIComponent(activeUpiId)}&pn=iMaxComputers&am=${finalAmount.toFixed(2)}&cu=INR`;
+                const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+                qrContainer.innerHTML = `<img src="${qrApi}" alt="UPI Payment QR">`;
+            } else {
+                qrContainer.innerHTML = `<p style="font-size:12px; color:#c62828;">UPI ID set செய்யப்படவில்லை!</p>`;
+            }
+        }
+
+        // Fetch Live Merchant UPI ID from Database
+        onValue(ref(database, 'settings/merchant_upi'), (snapshot) => {
+            if (snapshot.exists()) {
+                activeUpiId = snapshot.val();
+                updateCartSummary();
+            }
+        });
+
+        // Load Cart Items Realtime from Firebase
+        onValue(ref(database, 'carts/' + currentUser), (snapshot) => {
+            cartContentArea.innerHTML = "";
+            cartItems = [];
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                for (let key in data) {
+                    cartItems.push({ cartKey: key, ...data[key] });
+                }
+
+                if (cartItems.length > 0) {
+                    paymentSection.style.display = 'block';
+                    
+                    cartItems.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'cart-item';
+                        itemDiv.innerHTML = `
+                            <div class="item-img-wrap">
+                                <img src="${item.imageUrl || 'https://lh3.googleusercontent.com/d/placeholder'}" class="item-img" alt="${item.title}">
+                            </div>
+                            <div class="item-details">
+                                <h4 class="item-title">${item.title}</h4>
+                                <div class="item-price">₹${item.price}</div>
+                                <div class="quantity-control">
+                                    <button class="qty-btn" onclick="updateQty('${item.cartKey}', ${(item.quantity || 1) - 1})">-</button>
+                                    <span class="qty-value">${item.quantity || 1}</span>
+                                    <button class="qty-btn" onclick="updateQty('${item.cartKey}', ${(item.quantity || 1) + 1})">+</button>
+                                </div>
+                            </div>
+                            <button class="btn-remove" onclick="removeItem('${item.cartKey}')">Remove</button>
+                        `;
+                        cartContentArea.appendChild(itemDiv);
+                    });
+                } else {
+                    showEmptyCart();
+                }
+            } else {
+                showEmptyCart();
+            }
+            updateCartSummary();
+        });
+
+        function showEmptyCart() {
+            paymentSection.style.display = 'none';
+            cartContentArea.innerHTML = `
+                <div class="empty-cart-view">
+                    <p>Your cart is empty.</p>
+                    <a href="store.html" class="btn-store">Open Your Store</a>
+                </div>
+            `;
+        }
+
+        // Global Quantity Update Function
+        window.updateQty = function(cartKey, newQty) {
+            if (newQty < 1) {
+                removeItem(cartKey);
+                return;
+            }
+            update(ref(database, `carts/${currentUser}/${cartKey}`), { quantity: newQty });
+        };
+
+        // Global Remove Item Function
+        window.removeItem = function(cartKey) {
+            if (confirm("Are you sure to remove this item?")) {
+                remove(ref(database, `carts/${currentUser}/${cartKey}`));
+            }
+        };
+
+        // Apply Coupon Code Handler
+        document.getElementById('btnApplyCoupon').addEventListener('click', () => {
+            const code = couponInput.value.trim().toUpperCase();
+            if (!code) return;
+
+            get(ref(database, 'coupons/' + code)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    appliedDiscountPercent = parseFloat(data.discount);
+                    appliedCouponCode = code;
+                    couponMemberName = data.memberName || "Unknown";
+                    couponStatus.style.color = "#2e7d32";
+                    couponStatus.innerText = `Coupon Applied! ${appliedDiscountPercent}% OFF by ${couponMemberName}`;
+                    updateCartSummary();
+                } else {
+                    appliedDiscountPercent = 0;
+                    appliedCouponCode = "";
+                    couponMemberName = "";
+                    couponStatus.style.color = "#c62828";
+                    couponStatus.innerText = "Invalid Coupon Code!";
+                    updateCartSummary();
+                }
+            }).catch((err) => {
+                couponStatus.style.color = "#c62828";
+                couponStatus.innerText = "Error applying coupon.";
+            });
+        });
+
+        // WhatsApp Order Button Handler
+        document.getElementById('btnWhatsAppOrder').addEventListener('click', () => {
+            let subtotal = 0;
+            let itemListText = "";
+            cartItems.forEach((item, index) => {
+                let itemTotal = (parseFloat(item.price) || 0) * (item.quantity || 1);
+                subtotal += itemTotal;
+                itemListText += `${index + 1}. ${item.title} (Qty: ${item.quantity || 1}) - ₹${item.price} each = ₹${itemTotal}\n`;
+            });
+
+            let finalAmount = subtotal - (subtotal * (appliedDiscountPercent / 100));
+
+            let message = `*New Order Placed!* 🛒\n\n`;
+            message += `*Customer User ID:* ${currentUser}\n\n`;
+            message += `*Products Ordered:*\n${itemListText}\n`;
+            
+            if (appliedCouponCode) {
+                message += `*Coupon Applied:* ${appliedCouponCode} (${appliedDiscountPercent}% OFF)\n`;
+                message += `*Coupon Owner / Member:* ${couponMemberName}\n`;
+            } else {
+                message += `*Coupon Applied:* None\n`;
+            }
+
+            message += `*Total Payable Amount:* ₹${finalAmount.toFixed(0)}\n\n`;
+            message += `_Already Paid. Here is my payment screenshot!_ 📷`;
+
+            const whatsappUrl = `https://wa.me/${storeOwnerPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        // Sidebar Navigation
+        const openSidebarBtn = document.getElementById('openSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar(open) {
+            if (open) {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+            } else {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        }
+
+        openSidebarBtn.addEventListener('click', () => toggleSidebar(true));
+        sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+    </script>
+</body>
+</html>

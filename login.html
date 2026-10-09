@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i-Max Computers</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+            padding: 35px 24px;
+            text-align: center;
+        }
+
+        .header-container {
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 54px;
+            height: 54px;
+            background: linear-gradient(180deg, #029be5 0%, #0277bd 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 16px auto;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 136, 209, 0.25);
+        }
+
+        .title {
+            color: #0d47a1;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            color: #78909c;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .tab-container {
+            display: flex;
+            background: #f0f4f8;
+            border-radius: 16px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: #78909c;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: #0288d1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #455a64;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #cfd8dc;
+            border-radius: 14px;
+            font-size: 14px;
+            color: #263238;
+            outline: none;
+            background-color: #ffffff;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #0288d1;
+        }
+
+        .form-control::placeholder {
+            color: #b0bec5;
+        }
+
+        .error-msg {
+            color: #e53935;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(180deg, #0288d1 0%, #01579b 100%);
+            border: none;
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 16px rgba(2, 136, 209, 0.28);
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-submit:active {
+            opacity: 0.9;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .forgot-container {
+            margin-top: 18px;
+            text-align: center;
+        }
+
+        .forgot-link {
+            color: #78909c;
+            font-size: 13.5px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link span {
+            color: #0288d1;
+            font-weight: 600;
+        }
+
+        .forgot-link:hover {
+            color: #0288d1;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-view {
+            display: none;
+        }
+
+        .form-view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header-container">
+            <div class="brand-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+            </div>
+            <h1 class="title">i-Max Computers</h1>
+            <p class="subtitle">Sales & Service Solutions</p>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('signup')">Create Account</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" class="form-view active">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" class="form-control" placeholder="Enter your username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" id="loginBtn" class="btn-submit">
+                <span class="spinner" id="loginSpinner"></span>
+                <span id="loginBtnText">Sign In</span>
+            </button>
+            <div class="forgot-container">
+                <a href="forgot_password.html" class="forgot-link">Forgot password? <span>Reset here</span></a>
+            </div>
+        </form>
+
+        <!-- CREATE ACCOUNT FORM -->
+        <form id="signupForm" class="form-view">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" class="form-control" placeholder="Ex: John Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" class="form-control" placeholder="Enter 10 digit number" maxlength="10" required>
+                <div class="error-msg" id="phoneError">Please enter a valid 10-digit phone number!</div>
+            </div>
+            <div class="form-group">
+                <label>City / District</label>
+                <select id="district" class="form-control" required>
+                    <option value="" disabled selected>Select your district</option>
+                    <option value="Ariyalur">Ariyalur</option>
+                    <option value="Chengalpattu">Chengalpattu</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Coimbatore">Coimbatore</option>
+                    <option value="Cuddalore">Cuddalore</option>
+                    <option value="Dharmapuri">Dharmapuri</option>
+                    <option value="Dindigul">Dindigul</option>
+                    <option value="Erode">Erode</option>
+                    <option value="Kallakurichi">Kallakurichi</option>
+                    <option value="Kanchipuram">Kanchipuram</option>
+                    <option value="Kanyakumari">Kanyakumari</option>
+                    <option value="Karur">Karur</option>
+                    <option value="Krishnagiri">Krishnagiri</option>
+                    <option value="Madurai">Madurai</option>
+                    <option value="Mayiladuthurai">Mayiladuthurai</option>
+                    <option value="Nagapattinam">Nagapattinam</option>
+                    <option value="Namakkal">Namakkal</option>
+                    <option value="Nilgiris">Nilgiris</option>
+                    <option value="Perambalur">Perambalur</option>
+                    <option value="Pudukkottai">Pudukkottai</option>
+                    <option value="Ramanathapuram">Ramanathapuram</option>
+                    <option value="Ranipet">Ranipet</option>
+                    <option value="Salem">Salem</option>
+                    <option value="Sivaganga">Sivaganga</option>
+                    <option value="Tenkasi">Tenkasi</option>
+                    <option value="Thanjavur">Thanjavur</option>
+                    <option value="Theni">Theni</option>
+                    <option value="Thoothukudi">Thoothukudi</option>
+                    <option value="Tiruchirappalli">Tiruchirappalli</option>
+                    <option value="Tirunelveli">Tirunelveli</option>
+                    <option value="Tirupathur">Tirupathur</option>
+                    <option value="Tiruppur">Tiruppur</option>
+                    <option value="Tiruvallur">Tiruvallur</option>
+                    <option value="Tiruvannamalai">Tiruvannamalai</option>
+                    <option value="Tiruvarur">Tiruvarur</option>
+                    <option value="Vellore">Vellore</option>
+                    <option value="Viluppuram">Viluppuram</option>
+                    <option value="Virudhunagar">Virudhunagar</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="signupUsername" class="form-control" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPassword" class="form-control" placeholder="Create a password" required>
+            </div>
+            <button type="submit" id="signupBtn" class="btn-submit">
+                <span class="spinner" id="signupSpinner"></span>
+                <span id="signupBtnText">Create Account</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- FIREBASE SDK & LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+        import { getDatabase, ref, get, set, child } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
+
+        // FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHSiV0Y5zpzSI2fBeho7WnofFHyR2a3eo",
+            authDomain: "i-max-computers.firebaseapp.com",
+            databaseURL: "https://i-max-computers-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "i-max-computers",
+            storageBucket: "i-max-computers.firebasestorage.app",
+            messagingSenderId: "654132099212",
+            appId: "1:654132099212:web:ed3222b2c80efed5bf23a9"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // TAB SWITCHING
+        window.switchTab = function(tab) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const forms = document.querySelectorAll('.form-view');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+
+            if(tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('signupForm').classList.add('active');
+            }
+        };
+
+        // HANDLE SIGNUP
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const district = document.getElementById('district').value;
+            const username = document.getElementById('signupUsername').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const phoneError = document.getElementById('phoneError');
+
+            // 10 Digit Phone Number Validation
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phonePattern.test(phone)) {
+                phoneError.style.display = 'block';
+                return;
+            } else {
+                phoneError.style.display = 'none';
+            }
+
+            // Show Spinner
+            setLoading('signup', true);
+
+            // Check if username already exists
+            const dbRef = ref(database);
+            get(child(dbRef, 'users/' + username)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    alert('This username already exists! Please choose another one.');
+                    setLoading('signup', false);
+                } else {
+                    // Save User Data
+                    set(ref(database, 'users/' + username), {
+                        fullName: fullName,
+                        phone: phone,
+                        district: district,
+                        password: password,
+                        createdAt: new Date().toISOString()
+                    }).then(() => {
+                        alert('Account created successfully!');
+                        setLoading('signup', false);
+                        document.getElementById('signupForm').reset();
+                        switchTab('login');
+                    }).catch((error) => {
+                        alert('An error occurred: ' + error.message);
+                        setLoading('signup', false);
+                    });
+                }
+            }).catch((error) => {
+                alert('An error occurred: ' + error.message);
+                setLoading('signup', false);
+            });
+        });
+
+        // HANDLE LOGIN
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            setLoading('login', true);
+
+            const dbRef = ref(database);
+            get(child(dbRef, 'users/' + username)).then((snapshot) => {
+                setLoading('login', false);
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    if (userData.password === password) {
+                        // SAVE USER SESSION IN LOCALSTORAGE
+                        localStorage.setItem('loggedUser', username);
+
+                        alert('Login successful! Welcome ' + userData.fullName);
+                        
+                        // Redirect to index.html after login
+                        window.location.href = 'index.html';
+                    } else {
+                        alert('Incorrect password!');
+                    }
+                } else {
+                    alert('Username not found!');
+                }
+            }).catch((error) => {
+                setLoading('login', false);
+                alert('An error occurred: ' + error.message);
+            });
+        });
+
+        // HELPER: SPINNER CONTROL
+        function setLoading(formType, isLoading) {
+            const btn = document.getElementById(formType + 'Btn');
+            const spinner = document.getElementById(formType + 'Spinner');
+            const text = document.getElementById(formType + 'BtnText');
+
+            if (isLoading) {
+                btn.disabled = true;
+                spinner.style.display = 'inline-block';
+                text.style.opacity = '0.7';
+            } else {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                text.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+</html>

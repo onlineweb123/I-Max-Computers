@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i-Max Computers - Store</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #263238;
+            padding-top: 70px;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #0288d1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d47a1;
+        }
+
+        /* SIDEBAR & OVERLAY */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 200;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 201;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px 20px 20px;
+            background: linear-gradient(180deg, #0288d1 0%, #01579b 100%);
+            color: #ffffff;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sidebar-header p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex: 1;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 24px;
+            color: #455a64;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item a:hover, .sidebar-item a.active {
+            background-color: #e1f5fe;
+            color: #0288d1;
+        }
+
+        /* CONTAINER & SEARCH */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 1.5px solid #cfd8dc;
+            border-radius: 16px;
+            font-size: 14px;
+            outline: none;
+            background: #ffffff;
+            color: #263238;
+        }
+
+        .search-input:focus {
+            border-color: #0288d1;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #90a4ae;
+        }
+
+        /* PRODUCT GRID */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .product-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-img-wrap {
+            width: 100%;
+            height: 130px;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #f0f4f8;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 4px;
+        }
+
+        .product-desc {
+            font-size: 11.5px;
+            color: #78909c;
+            line-height: 1.3;
+            margin-bottom: 10px;
+            height: 32px;
+            overflow: hidden;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0288d1;
+            margin-bottom: 10px;
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            padding: 10px;
+            background: #e1f5fe;
+            border: none;
+            border-radius: 12px;
+            color: #0288d1;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-add-cart:active {
+            background: #0288d1;
+            color: #ffffff;
+        }
+
+        /* SPINNER STYLING */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(2, 136, 209, 0.3);
+            border-top: 2px solid #0288d1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* IMAGE VIEWER MODAL & PINCH TO ZOOM */
+        .image-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .image-viewer.active {
+            display: flex;
+        }
+
+        .full-img {
+            max-width: 95vw;
+            max-height: 90vh;
+            object-fit: contain;
+            transform-origin: center center;
+            user-select: none;
+            -webkit-user-drag: none;
+            transition: transform 0.05s ease-out;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #78909c;
+            font-size: 11px;
+            font-weight: 600;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item.active { color: #0288d1; }
+        .nav-item svg { width: 22px; height: 22px; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <button class="header-btn" id="openSidebarBtn" aria-label="Open Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <h1 class="header-title">i-Max Store</h1>
+        <button class="header-btn" onclick="window.location.href='notifications.html'" aria-label="Notifications">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>i-Max Computers</h2>
+            <p>Sales & Service Solutions</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="index.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="service.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    Services
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="store.html" class="active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    Store
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="my_cart.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                    My Cart
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="notifications.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    Notifications
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="profile.html">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profile
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN STORE CONTAINER -->
+    <main class="container">
+        <!-- REALTIME SEARCH INPUT -->
+        <div class="search-box">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search products (e.g. Laptop, RAM, Mouse)...">
+        </div>
+
+        <!-- DYNAMIC PRODUCTS GRID -->
+        <div class="product-grid" id="productGrid">
+            <p style="grid-column: span 2; text-align: center; color: #90a4ae;">Loading store products...</p>
+        </div>
+    </main>
+
+    <!-- IMAGE VIEWER MODAL -->
+    <div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
+        <img src="" id="fullImage" class="full-img" alt="Enlarged Product">
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Home</span>
+        </a>
+        <a href="service.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            <span>Service</span>
+        </a>
+        <a href="store.html" class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <span>Store</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- FIREBASE SDK & JS LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-database.js";
+
+        // Check Login Session
+        const currentSessionUser = localStorage.getItem('loggedUser');
+        if (!currentSessionUser) {
+            window.location.href = 'login.html';
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHSiV0Y5zpzSI2fBeho7WnofFHyR2a3eo",
+            authDomain: "i-max-computers.firebaseapp.com",
+            databaseURL: "https://i-max-computers-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "i-max-computers",
+            storageBucket: "i-max-computers.firebasestorage.app",
+            messagingSenderId: "654132099212",
+            appId: "1:654132099212:web:ed3222b2c80efed5bf23a9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let allProducts = [];
+
+        // LOAD PRODUCTS REALTIME FROM FIREBASE
+        const productsRef = ref(database, 'store_products');
+        onValue(productsRef, (snapshot) => {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = "";
+            allProducts = [];
+
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                for (let id in data) {
+                    allProducts.push({ id, ...data[id] });
+                }
+                renderProducts(allProducts);
+            } else {
+                grid.innerHTML = `<p style="grid-column: span 2; text-align: center; color: #90a4ae;">No products available in store.</p>`;
+            }
+        });
+
+        // RENDER PRODUCTS FUNCTION
+        function renderProducts(products) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = "";
+
+            if(products.length === 0) {
+                grid.innerHTML = `<p style="grid-column: span 2; text-align: center; color: #e53935;">No matching products found!</p>`;
+                return;
+            }
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div>
+                        <div class="product-img-wrap" onclick="openImageViewer('${p.imageUrl}')">
+                            <img src="${p.imageUrl}" class="product-img" alt="${p.title}">
+                        </div>
+                        <h4 class="product-title">${p.title}</h4>
+                        <p class="product-desc">${p.details}</p>
+                    </div>
+                    <div>
+                        <div class="product-price">₹${p.price}</div>
+                        <button class="btn-add-cart" onclick="addToCart(this, '${p.id}', '${p.title}', '${p.price}', '${p.imageUrl}')">
+                            <span class="btn-text">Add to Cart</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // REALTIME SEARCH FILTER
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const filtered = allProducts.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.details.toLowerCase().includes(query)
+            );
+            renderProducts(filtered);
+        });
+
+        // IMAGE VIEWER, GRADUAL PINCH TO ZOOM & TAP TO CLOSE LOGIC
+        const viewer = document.getElementById('imageViewer');
+        const fullImg = document.getElementById('fullImage');
+
+        let scale = 1, baseScale = 1, pStart = { x: 0, y: 0 }, pCurrent = { x: 0, y: 0 }, startDist = 0;
+
+        window.openImageViewer = function(url) {
+            fullImg.src = url;
+            scale = 1;
+            baseScale = 1;
+            pCurrent = { x: 0, y: 0 };
+            fullImg.style.transform = `translate(0px, 0px) scale(1)`;
+            viewer.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeImageViewer = function() {
+            viewer.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        fullImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeImageViewer();
+        });
+
+        fullImg.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                startDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                baseScale = scale;
+            } else if (e.touches.length === 1) {
+                pStart = { x: e.touches[0].clientX - pCurrent.x, y: e.touches[0].clientY - pCurrent.y };
+            }
+        }, { passive: true });
+
+        fullImg.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                if (startDist > 0) {
+                    const ratio = dist / startDist;
+                    scale = Math.min(Math.max(1, baseScale * ratio), 4);
+                    fullImg.style.transform = `translate(${pCurrent.x}px, ${pCurrent.y}px) scale(${scale})`;
+                }
+            } else if (e.touches.length === 1 && scale > 1) {
+                pCurrent.x = e.touches[0].clientX - pStart.x;
+                pCurrent.y = e.touches[0].clientY - pStart.y;
+                fullImg.style.transform = `translate(${pCurrent.x}px, ${pCurrent.y}px) scale(${scale})`;
+            }
+        }, { passive: true });
+
+        fullImg.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2 && scale <= 1) {
+                scale = 1;
+                baseScale = 1;
+                pCurrent = { x: 0, y: 0 };
+                fullImg.style.transform = `translate(0px, 0px) scale(1)`;
+            }
+        }, { passive: true });
+
+        // ADD TO CART FUNCTION WITH SPINNER
+        window.addToCart = async function(btn, id, title, price, imageUrl) {
+            const textSpan = btn.querySelector('.btn-text');
+            const spinner = btn.querySelector('.spinner');
+
+            btn.disabled = true;
+            textSpan.style.display = 'none';
+            spinner.style.display = 'block';
+
+            try {
+                const user = localStorage.getItem('loggedUser') || 'Guest';
+                await push(ref(database, 'carts/' + user), {
+                    productId: id,
+                    title: title,
+                    price: price,
+                    imageUrl: imageUrl,
+                    quantity: 1,
+                    timestamp: Date.now()
+                });
+                alert(`${title} added to cart!`);
+            } catch (error) {
+                alert('Error adding to cart. Try again!');
+            } finally {
+                btn.disabled = false;
+                textSpan.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        };
+
+        // SIDEBAR TOGGLE
+        document.getElementById('openSidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('sidebarOverlay').classList.add('active');
+        });
+        document.getElementById('sidebarOverlay').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        });
+    </script>
+</body>
+</html>
